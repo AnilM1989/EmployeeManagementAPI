@@ -1,12 +1,30 @@
+using EmployeeManagementAPI.Data;
+using EmployeeManagementAPI.Repositories;  // Add this to reference Repository<>
+using EmployeeManagementAPI.Services;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+// Register DbContext
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// Register Repository Pattern
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));  // Add this line
+
+// Register EmployeeService
+builder.Services.AddScoped<EmployeeService>();
+
+builder.Services.AddScoped<IEmployeeFactory, EmployeeFactory>();
+   
 var app = builder.Build();
 
+app.UseMiddleware<LoggingMiddleware>();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -15,7 +33,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseAuthorization();
 
+app.MapControllers();
 var summaries = new[]
 {
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
