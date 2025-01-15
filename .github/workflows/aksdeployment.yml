@@ -6,7 +6,7 @@ on:
       - main
 
 permissions:
-  id-token: write  # Add this line to enable the ID token for authentication
+  id-token: write  # Required for OIDC login, but won't be needed in this case if using client secret
 
 jobs:
   build-and-deploy:
@@ -22,7 +22,7 @@ jobs:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}  # Authentication with client secret
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
