@@ -5,6 +5,9 @@ on:
     branches:
       - main
 
+permissions:
+  id-token: write  # Add this line to enable the ID token for authentication
+
 jobs:
   build-and-deploy:
     runs-on: windows-latest  # Use a Windows VM as you prefer
