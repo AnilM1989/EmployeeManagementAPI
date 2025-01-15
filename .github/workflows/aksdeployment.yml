@@ -46,7 +46,7 @@ jobs:
 
       - name: Configure kubectl to access AKS
         run: |
-          az aks get-credentials --resource-group <your-resource-group> --name anilm-kub
+          az aks get-credentials --resource-group anilm-rg --name anilm-kub
 
       - name: Deploy to AKS
         run: |
