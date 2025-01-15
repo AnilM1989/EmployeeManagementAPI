@@ -1,0 +1,54 @@
+name: Build and Deploy to AKS via ACR
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: windows-latest  # Use a Windows VM as you prefer
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Log in to Azure
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/docker
+          key: ${{ runner.os }}-docker-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-docker-
+
+      - name: Build Docker image
+        run: |
+          docker build -t anilmacr.azurecr.io/employeemanagementapi:${{ github.sha }} .
+
+      - name: Log in to Azure Container Registry (ACR)
+        run: |
+          az acr login --name anilmacr
+
+      - name: Push Docker image to ACR
+        run: |
+          docker push anilmacr.azurecr.io/employeemanagementapi:${{ github.sha }}
+
+      - name: Configure kubectl to access AKS
+        run: |
+          az aks get-credentials --resource-group <your-resource-group> --name anilm-kub
+
+      - name: Deploy to AKS
+        run: |
+          kubectl set image deployment/employeemanagementapi employeemanagementapi=anilmacr.azurecr.io/employeemanagementapi:${{ github.sha }}
+          kubectl rollout status deployment/employeemanagementapi
