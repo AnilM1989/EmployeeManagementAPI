@@ -23,7 +23,7 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}  # Authentication with client secret
-          auth-type: 'servicePrincipal' # Explicitly specify service principal authentication (not OIDC)
+          auth-type: 'SERVICE_PRINCIPAL' # Explicitly specify service principal authentication (not OIDC)
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
