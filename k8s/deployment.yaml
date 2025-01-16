@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: employeemanagementapi
+  namespace: default # Adjust if you're using a custom namespace
+  labels:
+    app: employeemanagementapi
+spec:
+  replicas: 2 # Number of replicas for high availability
+  selector:
+    matchLabels:
+      app: employeemanagementapi
+  template:
+    metadata:
+      labels:
+        app: employeemanagementapi
+    spec:
+      containers:
+      - name: employeemanagementapi
+        image: anilmacr.azurecr.io/employeemanagementapi:latest
+        ports:
+        - containerPort: 80
+        env: # Add environment variables if needed
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Production"
+        resources: # Define resource limits
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
