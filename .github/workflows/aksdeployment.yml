@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   build-and-deploy:
-    runs-on: windows-latest  # Use a Windows VM as you prefer
+    runs-on: windows-latest 
 
     steps:
       - name: Checkout code
